@@ -14,6 +14,9 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 
 # Create your objects here.
 ev3 = EV3Brick()
+left_motor = Motor(Port.B)
+right_motor = Motor(Port.C)
+drive_base = DriveBase(left_motor, right_motor, wheel_diameter=55, axle_track=118)
 
 
 # Write your program here.
