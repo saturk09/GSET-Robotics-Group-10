@@ -1,6 +1,6 @@
 #!/usr/bin/env pybricks-micropython
 
-from ast import While
+
 
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
@@ -22,26 +22,39 @@ left_motor = Motor(Port.B)
 right_motor = Motor(Port.C)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55, axle_track=118)
 lightSensor = LightSensor(Port.S3)
-
+#will add sensor perhaps in another life
 #opticalSensor = UltrasonicSensor(Port.S4)
-
-drive_speed = 500
-#robot.straight(1000)
-
+drive_speed = 65
+reflection_target = 20
+turn_intensity = .50
 # Write your program here.
+Kp = 3.1
+Kd = 13
+Ki = 0.0007
 
+i_term = 0
+previous_error = 0
 while True:
-    absorbance = lightSensor.reflection()
-    ev3.speaker.bep()
-    ev3.speaker.say("Absorbance is " + str(absorbance))
-    wait(2000)
-#line following loop
-    if absorbance < 50:
-        robot.drive(drive_speed, 30)
-    else:
-        robot.drive(drive_speed, -30)
+    error = reflection_target - lightSensor.reflection()
+    i_term = i_term + error
+    i_term = max(min(i_term, 100), -100)  # Clamp i_term to prevent windup
+    d_error = error - previous_error
+    previous_error = error
 
-#obstacle avoidance loop
+    bot_corr = Kp * error + Kd * d_error + Ki * i_term
+
+    if abs(error) > 10:
+        drive_speed = 20
+    elif abs(error) > 5:
+        drive_speed = 40
+    else:
+        drive_speed = 80
+
+    robot.drive(drive_speed, bot_corr)
+    wait(30)
+
+
+#obstacle avoidance loop idea
 #  while True:
 #     distance = opticalSensor.distance()
 #     if distance < 200:
