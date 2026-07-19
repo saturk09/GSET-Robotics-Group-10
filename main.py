@@ -44,7 +44,7 @@ while line_following:
     d_error = error - previous_error
     previous_error = error
 
-    bot_corr = Kp * error + Kd * d_error + Ki * i_term
+#     bot_corr = Kp * error + Kd * d_error + Ki * i_term
 
     if abs(error) > 10:
         drive_speed = 30
