@@ -1,7 +1,5 @@
 #!/usr/bin/env pybricks-micropython
 
-
-
 from pybricks.hubs import EV3Brick
 from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
                                  InfraredSensor, UltrasonicSensor, GyroSensor)
@@ -23,6 +21,8 @@ right_motor = Motor(Port.C)
 robot = DriveBase(left_motor, right_motor, wheel_diameter=55, axle_track=118)
 lightSensor = LightSensor(Port.S3)
 colorSensor = ColorSensor(Port.S1)
+ir=InfraredSensor(Port.S4)
+rf = UltrasonicSensor(Port.S2)
 #will add sensor perhaps in another life
 #opticalSensor = UltrasonicSensor(Port.S4)
 drive_speed = 65
@@ -65,6 +65,100 @@ while line_following:
         wait(3500) 
     if(rgb.r > rgb.b and rgb.r > rgb.g and rgb.r > 25):
         line_following = False
+
+while line_following == False:
+    drive_six_inches()
+    roomcheck3()
+    roomcheck2()
+    roomcheck1()
+    stop_robots()
+
+
+def stop_robots():
+    robot.stop()
+    wait(200)
+
+def turn_robots():
+    robot.turn(90)
+
+def read_ir():
+    return ir.read("AC")
+
+def drive_six_inches():
+    while True:
+        robot.drive(100,0)
+        if rf.distance() < 152.4:
+            stop_robots()
+
+def roomcheck3():
+    robot.turn(90)
+    wait(100)
+    robot.straight(304.8)
+    wait(100)
+    robot.turn(-90)
+    wait(100)
+    robot.straight(152.4)
+    wait(100)
+    for i in range(0, 361):
+        if ir.read() == 5:
+            robot.drive(100,0)
+            wait(5000)
+            stop_robots()
+            break
+        else:
+            robot.turn(1)
+            wait(30)
+            i+=1
+    roomcheck2()
+
+def roomcheck2():
+    robot.turn(180)
+    wait(100)
+    robot.straight(152.4)
+    wait(100)
+    robot.turn(90)
+    wait(100)
+    robot.straight(304.8)
+    robot.straight(285.75)
+    wait(100)
+    robot.turn(90)
+    robot.straight(304.8)
+    wait(100)
+    for i in range(0, 361):
+        if ir.read() == 5:
+            robot.drive(100,0)
+            wait(5000)
+            stop_robots()
+            break
+        else:
+            robot.turn(1)
+            wait(30)
+            i+=1
+    roomcheck1()
+
+def roomcheck1():
+    robot.turn(180)
+    wait(100)
+    robot.straight(304.8)
+    wait(100)
+    robot.turn(90)
+    wait(100)
+    robot.straight(254)
+    wait(100)
+    robot.turn(90)
+    robot.straight(152.4)
+    wait(100)
+    for i in range(0, 361):
+        if ir.read() == 5:
+            robot.drive(100,0)
+            wait(5000)
+            stop_robots()
+            break
+        else:
+            robot.turn(1)
+            wait(30)
+            i+=1
+    stop_robots()
 
 
 
